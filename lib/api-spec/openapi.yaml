@@ -10,6 +10,18 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Phone OTP authentication
+  - name: mandi
+    description: Live market price discovery
+  - name: dashboard
+    description: Role-specific dashboard summaries
+  - name: listings
+    description: Farm produce listings
+  - name: orders
+    description: Buyer orders
+  - name: assistant
+    description: Agricultural assistant
 paths:
   /healthz:
     get:
@@ -24,7 +36,193 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/request-otp:
+    post:
+      operationId: requestOtp
+      tags: [auth]
+      summary: Request a simulated phone OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpRequest"
+      responses:
+        "200":
+          description: OTP challenge created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpChallenge"
+        "400":
+          description: Invalid phone number
+  /auth/verify-otp:
+    post:
+      operationId: verifyOtp
+      tags: [auth]
+      summary: Verify a phone OTP and create a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpVerification"
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Invalid or expired OTP
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      parameters:
+        - $ref: "#/components/parameters/Role"
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /mandi-prices:
+    get:
+      operationId: getMandiPrices
+      tags: [mandi]
+      summary: Fetch live mandi prices from data.gov.in
+      parameters:
+        - name: state
+          in: query
+          schema: { type: string }
+        - name: district
+          in: query
+          schema: { type: string }
+        - name: market
+          in: query
+          schema: { type: string }
+        - name: commodity
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        "200":
+          description: Current market prices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MandiPrice"
+  /listings:
+    get:
+      operationId: getListings
+      tags: [listings]
+      summary: Browse produce listings
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string, enum: [farmer, buyer] }
+        - name: district
+          in: query
+          schema: { type: string }
+        - name: commodity
+          in: query
+          schema: { type: string }
+        - name: grade
+          in: query
+          schema: { type: string }
+        - name: maxPrice
+          in: query
+          schema: { type: number }
+      responses:
+        "200":
+          description: Produce listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Listing"
+    post:
+      operationId: createListing
+      tags: [listings]
+      summary: Publish a produce listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListingInput"
+      responses:
+        "201":
+          description: Listing created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+  /orders:
+    get:
+      operationId: getOrders
+      tags: [orders]
+      responses:
+        "200":
+          description: Buyer orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Place a sample or full produce order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Order placed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+  /ai-chat:
+    post:
+      operationId: sendAiChat
+      tags: [assistant]
+      summary: Ask the agricultural assistant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          description: Assistant response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
 components:
+  parameters:
+    Role:
+      name: role
+      in: query
+      required: true
+      schema:
+        type: string
+        enum: [farmer, buyer]
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +231,155 @@ components:
           type: string
       required:
         - status
+    OtpRequest:
+      type: object
+      required: [phone, role]
+      properties:
+        phone: { type: string, minLength: 10 }
+        role: { type: string, enum: [farmer, buyer] }
+        name: { type: ["string", "null"] }
+    OtpChallenge:
+      type: object
+      required: [challengeId, message, expiresInSeconds]
+      properties:
+        challengeId: { type: string }
+        message: { type: string }
+        expiresInSeconds: { type: number }
+        demoOtp: { type: ["string", "null"] }
+    OtpVerification:
+      type: object
+      required: [challengeId, phone, role, otp]
+      properties:
+        challengeId: { type: string }
+        phone: { type: string }
+        role: { type: string, enum: [farmer, buyer] }
+        otp: { type: string, minLength: 4, maxLength: 4 }
+        name: { type: ["string", "null"] }
+    AuthUser:
+      type: object
+      required: [id, phone, role, name]
+      properties:
+        id: { type: string }
+        phone: { type: string }
+        role: { type: string, enum: [farmer, buyer] }
+        name: { type: string }
+    MandiPrice:
+      type: object
+      required: [id, state, district, market, commodity, variety, minPrice, maxPrice, modalPrice, unit, source, updatedAt]
+      properties:
+        id: { type: string }
+        state: { type: string }
+        district: { type: string }
+        market: { type: string }
+        commodity: { type: string }
+        variety: { type: string }
+        minPrice: { type: number }
+        maxPrice: { type: number }
+        modalPrice: { type: number }
+        unit: { type: string }
+        source: { type: string }
+        updatedAt: { type: string }
+    DashboardSummary:
+      type: object
+      required: [role, headline, subheadline, stats, activity, trend]
+      properties:
+        role: { type: string, enum: [farmer, buyer] }
+        headline: { type: string }
+        subheadline: { type: string }
+        stats:
+          type: array
+          items:
+            $ref: "#/components/schemas/SummaryStat"
+        activity:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+        trend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+    SummaryStat:
+      type: object
+      required: [label, value, detail, tone]
+      properties:
+        label: { type: string }
+        value: { type: string }
+        detail: { type: string }
+        tone: { type: string }
+    Activity:
+      type: object
+      required: [id, title, detail, time, type]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        time: { type: string }
+        type: { type: string }
+    TrendPoint:
+      type: object
+      required: [month, current, previous]
+      properties:
+        month: { type: string }
+        current: { type: number }
+        previous: { type: number }
+    ListingInput:
+      type: object
+      required: [farmerName, commodity, category, grade, quantity, unit, price, district, state]
+      properties:
+        farmerName: { type: string }
+        commodity: { type: string }
+        category: { type: string }
+        grade: { type: string }
+        quantity: { type: number, minimum: 1 }
+        unit: { type: string, enum: [kg, quintal] }
+        price: { type: number, minimum: 1 }
+        district: { type: string }
+        state: { type: string }
+        photoUrl: { type: ["string", "null"] }
+    Listing:
+      allOf:
+        - $ref: "#/components/schemas/ListingInput"
+        - type: object
+          required: [id, farmerId, postedAt, status, distanceKm]
+          properties:
+            id: { type: string }
+            farmerId: { type: string }
+            postedAt: { type: string }
+            status: { type: string }
+            distanceKm: { type: number }
+    OrderInput:
+      type: object
+      required: [listingId, quantity, isSample, shippingCity]
+      properties:
+        listingId: { type: string }
+        quantity: { type: number, minimum: 1 }
+        isSample: { type: boolean }
+        shippingCity: { type: string }
+    Order:
+      allOf:
+        - $ref: "#/components/schemas/OrderInput"
+        - type: object
+          required: [id, commodity, farmerName, total, status, createdAt]
+          properties:
+            id: { type: string }
+            commodity: { type: string }
+            farmerName: { type: string }
+            total: { type: number }
+            status: { type: string, enum: [Ordered, Dispatched, "Out for Delivery", Delivered] }
+            createdAt: { type: string }
+    ChatInput:
+      type: object
+      required: [message, language]
+      properties:
+        message: { type: string, minLength: 1 }
+        language: { type: string }
+        role: { type: string, enum: [farmer, buyer] }
+    ChatResponse:
+      type: object
+      required: [reply, suggestions]
+      properties:
+        reply: { type: string }
+        suggestions:
+          type: array
+          items: { type: string }
 

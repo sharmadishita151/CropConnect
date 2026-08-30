@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "FarmAI"
+description = "A multilingual agricultural marketplace that connects farmers and buyers with live mandi price discovery, crop listings, sourcing, orders, and practical AI assistance."
+version = "1.0.0"
+id = "artifacts/farmai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26172
+
+[services.development]
+run = "pnpm --filter @workspace/farmai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/farmai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/farmai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26172"
+BASE_PATH = "/"

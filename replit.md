@@ -1,6 +1,6 @@
-# [Project name]
+# FarmAI
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+FarmAI connects Indian farmers and buyers with multilingual phone OTP access, live mandi price discovery, crop listings, and local produce ordering.
 
 ## Run & Operate
 
@@ -22,23 +22,31 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/farmai/src/` — React/Vite app, role-based routes, translations, and the FarmAI visual system
+- `artifacts/api-server/src/routes/farm.ts` — phone OTP, mandi price, dashboard, listing, order, and assistant API behavior
+- `lib/api-spec/openapi.yaml` — source of truth for the typed API contract
+- `lib/api-client-react/src/generated/` and `lib/api-zod/src/generated/` — generated client hooks and server validators
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Mandi prices prefer data.gov.in's Agmarknet resource and fall back to clearly labelled demo rows when the provider is unavailable, so the dashboard remains useful offline.
+- Phone OTP is intentionally the only sign-in path; the current demo flow uses a server-issued challenge and development-only demo code rather than social sign-in.
+- Listings and orders use a small in-memory seed store for the first demo build, keeping the product immediately runnable while preserving typed endpoints for a later persistent database.
+- Translation is client-side for fast language switching and supports English, Hindi, and Marathi input without translating user-entered text.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Farmers can review live market prices, compare trends, publish produce with photos and expected prices, and ask an agricultural assistant for negotiation and quality guidance. Buyers can source by nearby district, filter listings, request paid samples, place orders, and track delivery.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- No Google or other social sign-in; farmers and buyers enter a phone number and OTP.
+- Major UI copy should remain usable in English, Hindi, and Marathi.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- `DATA_GOV_API_KEY` is read only by the API server; restart `artifacts/api-server: API Server` after changing the secret.
+- The app expects the shared API at `/api`; do not add a Vite proxy or hard-code localhost URLs in the frontend.
 
 ## Pointers
 

@@ -1,0 +1,42 @@
+Build a full-stack web application called "FarmAI" created by team "Harvest Hub" for the Smart India Hackathon problem statement: "Strengthening Market Linkages and Price Discovery for Farmers."
+
+### Tech Stack & Design:
+- **Frontend:** React with Tailwind CSS, Lucide React icons, and Recharts/Chart.js for analytics.
+- **Backend:** Node.js / Express or Python / FastAPI with mockable database endpoints (or SQLite/PostgreSQL).
+- **Theme & Aesthetics:** Clean, professional agricultural theme with a pastel green color palette (e.g., soft mint, sage, light emerald backgrounds and dark green accents), accessible typography, and mobile-friendly responsive layout.
+
+---
+
+### Core Requirements & User Roles:
+
+#### 1. Authentication & Localization:
+- **Role Selection:** Toggle between **Farmer** and **Buyer** at the top/landing page.
+- **Login/Signup Flow:** Phone number input with simulated 4-digit OTP verification.
+- **Multilingual Support:** Language switcher dropdown (English, Hindi, Marathi, etc.) with functional translation across major UI text.
+
+#### 2. Farmer Portal:
+- **Crop Listing Flow:**
+  - Category & Crop selection from a dropdown (e.g., Vegetables, Grains, Fruits, Pulses).
+  - Quality/Grade selector (e.g., Grade A, Grade B, Grade C).
+  - Quantity/Weight input (in kg / quintals) and minimum expected price.
+  - Crop photo upload (with camera access/file picker preview).
+- **Price Discovery & Market Intelligence:**
+  - Real-time Mandi price dashboard searchable by APMC/mandi, commodity, and state.
+  - Price trends and historical analysis: Interactive charts showing last year's prices, current prices, and year-over-year percentage price increase/fluctuations.
+- **AI Farmer Assistant (Chatbot):**
+  - Embedded chatbot widget to handle crop advice, price negotiation queries, quality guidelines, and complaint resolution.
+
+#### 3. Buyer Portal:
+- **Location-Based Sourcing:** Buyer enters their City/District to see available farmers and listings strictly within their geographic vicinity.
+- **Search & Filters:** Filter crops by commodity type, grade, quantity available, and maximum price range slider.
+- **Sample Request Module:** Option for buyers to order small samples (with explicit paid pricing/shipping calculated).
+- **Order Placement & Tracking:**
+  - Direct order placement for delivery with an interactive visual Order Tracking timeline (Ordered -> Dispatched -> Out for Delivery -> Delivered).
+  - Review & Rating modal after successful delivery completion.
+- **Buyer Support:** Dedicated customer care/ticketing component.
+
+#### 4. API & External Integrations:
+- Structure an Express/FastAPI route `/api/mandi-prices` designed to integrate with data.gov.in (Agmarknet / Open Government Data Platform). Include realistic fallback mock data for major crops across APMC mandis if the API key is not present.
+- Structure an `/api/ai-chat` endpoint configured for OpenAI/Gemini with an integrated agricultural prompt system.
+
+Provide clean, modular code with complete seed data for demonstration so the app is fully functional out of the box.
