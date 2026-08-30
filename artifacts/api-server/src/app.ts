@@ -26,7 +26,9 @@ app.use(
   }),
 );
 app.use(cors());
-app.use(express.json());
+// Crop photos are sent as data URLs by the current demo flow. Allow enough
+// room for a typical phone image while keeping the request bounded.
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
