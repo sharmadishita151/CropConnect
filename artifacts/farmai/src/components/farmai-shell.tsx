@@ -33,11 +33,11 @@ export function FarmAIShell({ user, language, setLanguage, children }: Props) {
         <div className="mb-9 flex items-center justify-between px-3">
           <Link href={isBuyer ? '/buyer' : '/farmer'} className="flex items-center gap-3" data-testid="link-brand">
             <span className="grid size-10 place-items-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"><Sprout size={21} strokeWidth={2.4} /></span>
-            <span><strong className="font-display text-xl tracking-tight">FarmAI</strong><span className="block text-[10px] uppercase tracking-[.18em] text-sidebar-foreground/55">bharat market</span></span>
+            <span><strong className="font-display text-xl tracking-tight">FarmAI</strong><span className="block text-[10px] uppercase tracking-[.18em] text-sidebar-foreground/55">{t.marketLabel}</span></span>
           </Link>
-          <button onClick={() => setMobileOpen(false)} className="rounded-lg p-2 text-sidebar-foreground/70 hover:bg-sidebar-accent/20 md:hidden" aria-label="Close menu" data-testid="button-close-menu"><X size={18} /></button>
+          <button onClick={() => setMobileOpen(false)} className="rounded-lg p-2 text-sidebar-foreground/70 hover:bg-sidebar-accent/20 md:hidden" aria-label={t.closeMenu} data-testid="button-close-menu"><X size={18} /></button>
         </div>
-        <div className="mb-5 px-3 text-[10px] font-bold uppercase tracking-[.18em] text-sidebar-foreground/40">{isBuyer ? t.buyer : t.farmer} workspace</div>
+        <div className="mb-5 px-3 text-[10px] font-bold uppercase tracking-[.18em] text-sidebar-foreground/40">{isBuyer ? t.buyer : t.farmer} {t.workspace}</div>
         <nav className="space-y-1">
           {navItems.map((item) => {
             const active = location === item.href || (item.href === '/farmer' && location === '/farmer/') || (item.href === '/buyer' && location === '/buyer/');
@@ -54,11 +54,11 @@ export function FarmAIShell({ user, language, setLanguage, children }: Props) {
           </div>
         </div>
       </aside>
-      {mobileOpen && <button className="fixed inset-0 z-30 bg-foreground/30 md:hidden" onClick={() => setMobileOpen(false)} aria-label="Close navigation" data-testid="button-overlay-menu" />}
+      {mobileOpen && <button className="fixed inset-0 z-30 bg-foreground/30 md:hidden" onClick={() => setMobileOpen(false)} aria-label={t.closeNavigation} data-testid="button-overlay-menu" />}
       <div className="md:pl-[248px]">
         <header className="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-border/70 bg-background/90 px-4 backdrop-blur md:px-8">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileOpen(true)} className="rounded-xl border border-border bg-card p-2.5 md:hidden" aria-label="Open menu" data-testid="button-open-menu"><Menu size={19} /></button>
+            <button onClick={() => setMobileOpen(true)} className="rounded-xl border border-border bg-card p-2.5 md:hidden" aria-label={t.openMenu} data-testid="button-open-menu"><Menu size={19} /></button>
             <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex"><span className="size-1.5 rounded-full bg-primary" /> {t.today}, {new Intl.DateTimeFormat(language === 'en' ? 'en-IN' : language === 'hi' ? 'hi-IN' : 'mr-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())}</div>
           </div>
           <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export function FarmAIShell({ user, language, setLanguage, children }: Props) {
             <select id="global-language" value={language} onChange={(e) => setLanguage(e.target.value as Language)} className="cursor-pointer rounded-lg border border-border bg-card px-2.5 py-2 text-xs font-semibold outline-none focus:border-primary focus:ring-2 focus:ring-ring/20" data-testid="select-global-language">
               {Object.entries(languageNames).map(([key, name]) => <option value={key} key={key}>{name}</option>)}
             </select>
-            <button className="relative rounded-lg border border-border bg-card p-2.5 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30" aria-label="Notifications" data-testid="button-notifications"><Bell size={17} /><span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-accent" /></button>
+            <button className="relative rounded-lg border border-border bg-card p-2.5 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30" aria-label={t.notifications} data-testid="button-notifications"><Bell size={17} /><span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-accent" /></button>
             <Link href="/settings" className="hidden items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold hover:bg-muted sm:flex" data-testid="link-header-profile"><span className="grid size-7 place-items-center rounded-full bg-primary/15 text-xs font-bold text-primary">{(user.name || 'F').slice(0, 1).toUpperCase()}</span><ChevronDown size={14} className="text-muted-foreground" /></Link>
           </div>
         </header>
@@ -88,8 +88,8 @@ export function LoadingBlock({ label }: { label: string }) {
   return <div className="rounded-2xl border border-border bg-card p-8" data-testid="status-loading"><div className="flex items-center gap-3"><span className="size-2 animate-pulse rounded-full bg-primary" /><span className="text-sm text-muted-foreground">{label}</span></div><div className="mt-6 grid gap-3 sm:grid-cols-3"><div className="h-20 animate-pulse rounded-xl bg-muted" /><div className="h-20 animate-pulse rounded-xl bg-muted" /><div className="h-20 animate-pulse rounded-xl bg-muted" /></div></div>;
 }
 
-export function ErrorBlock({ label, onRetry }: { label: string; onRetry: () => void }) {
-  return <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center" data-testid="status-error"><CircleHelp className="mx-auto mb-3 text-destructive" size={25} /><p className="text-sm text-foreground">{label}</p><button onClick={onRetry} className="mt-4 rounded-lg bg-destructive px-4 py-2 text-xs font-bold text-destructive-foreground transition-transform hover:-translate-y-0.5" data-testid="button-retry">{getCopy('en').retry}</button></div>;
+export function ErrorBlock({ label, onRetry, language = 'en' }: { label: string; onRetry: () => void; language?: Language }) {
+  return <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-8 text-center" data-testid="status-error"><CircleHelp className="mx-auto mb-3 text-destructive" size={25} /><p className="text-sm text-foreground">{label}</p><button onClick={onRetry} className="mt-4 rounded-lg bg-destructive px-4 py-2 text-xs font-bold text-destructive-foreground transition-transform hover:-translate-y-0.5" data-testid="button-retry">{getCopy(language).retry}</button></div>;
 }
 
 export function EmptyBlock({ title, detail, action }: { title: string; detail?: string; action?: React.ReactNode }) {

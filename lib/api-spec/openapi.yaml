@@ -82,6 +82,12 @@ paths:
       tags: [dashboard]
       parameters:
         - $ref: "#/components/parameters/Role"
+        - name: language
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [en, hi, mr]
       responses:
         "200":
           description: Dashboard summary
