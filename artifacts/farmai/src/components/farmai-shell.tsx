@@ -33,7 +33,7 @@ export function FarmAIShell({ user, language, setLanguage, children }: Props) {
         <div className="mb-9 flex items-center justify-between px-3">
           <Link href={isBuyer ? '/buyer' : '/farmer'} className="flex items-center gap-3" data-testid="link-brand">
             <span className="grid size-10 place-items-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"><Sprout size={21} strokeWidth={2.4} /></span>
-            <span><strong className="font-display text-xl tracking-tight">FarmAI</strong><span className="block text-[10px] uppercase tracking-[.18em] text-sidebar-foreground/55">{t.marketLabel}</span></span>
+            <span><strong className="font-display text-xl tracking-tight">CropConnect</strong><span className="block text-[10px] uppercase tracking-[.18em] text-sidebar-foreground/55">{t.marketLabel}</span></span>
           </Link>
           <button onClick={() => setMobileOpen(false)} className="rounded-lg p-2 text-sidebar-foreground/70 hover:bg-sidebar-accent/20 md:hidden" aria-label={t.closeMenu} data-testid="button-close-menu"><X size={18} /></button>
         </div>

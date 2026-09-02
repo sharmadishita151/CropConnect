@@ -1,6 +1,6 @@
-# FarmAI
+# CropConnect
 
-FarmAI connects Indian farmers and buyers with multilingual phone OTP access, live mandi price discovery, crop listings, and local produce ordering.
+CropConnect connects Indian farmers and buyers with multilingual phone OTP access, live mandi price discovery, crop listings, and local produce ordering.
 
 ## Run & Operate
 
@@ -22,7 +22,7 @@ FarmAI connects Indian farmers and buyers with multilingual phone OTP access, li
 
 ## Where things live
 
-- `artifacts/farmai/src/` — React/Vite app, role-based routes, translations, and the FarmAI visual system
+- `artifacts/farmai/src/` — React/Vite app, role-based routes, translations, and the CropConnect visual system
 - `artifacts/api-server/src/routes/farm.ts` — phone OTP, mandi price, dashboard, listing, order, and assistant API behavior
 - `lib/api-spec/openapi.yaml` — source of truth for the typed API contract
 - `lib/api-client-react/src/generated/` and `lib/api-zod/src/generated/` — generated client hooks and server validators

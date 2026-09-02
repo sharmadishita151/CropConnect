@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/"
-title = "FarmAI"
+title = "CropConnect"
 description = "A multilingual agricultural marketplace that connects farmers and buyers with live mandi price discovery, crop listings, sourcing, orders, and practical AI assistance."
 version = "1.0.0"
 id = "artifacts/farmai"
